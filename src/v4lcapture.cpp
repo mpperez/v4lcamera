@@ -30,9 +30,10 @@
 
 ///STATIC VARS
 mapvl4capdevice  v4lcapture::m_devicesmap;
-globmutex v4lcapture::m_devicesmap_mutex;
+QMutex v4lcapture::m_devicesmap_mutex;
 
-v4lcapture::v4lcapture()
+v4lcapture::v4lcapture():
+	m_capturesemaphore(1)
 {
 	m_fid=-1;
 	m_status=V4LCAP_CLOSED;
@@ -781,8 +782,7 @@ int v4lcapture::StopAdquisition()
 {
 	if(m_fid==-1|| m_status!=V4LCAP_RUN)
 		return -1;
-	int ret=m_capturesemaphore.get(2500);
-	if(ret==-1)
+	if(!m_capturesemaphore.tryAcquire(1,2500))
 	{
 		string msg="Error Capturing semaphore to stop";
 		printerror(msg);
@@ -811,18 +811,15 @@ int v4lcapture::StopAdquisition()
 	}*/
 
 	m_status=	V4LCAP_PAUSED;
-	m_capturesemaphore.unget();
+	m_capturesemaphore.release();
 	return 0;
 }
 int v4lcapture::WaitNextFrame(v4l2image **img,int mstimeout)
 {
-	if(m_capturesemaphore.get(100)<0 ||m_fid==-1|| m_status!=V4LCAP_RUN)
+	if(m_fid==-1|| m_status!=V4LCAP_RUN)
 		return -1;
-	if( m_status!=V4LCAP_RUN)
-	{
-		m_capturesemaphore.unget();
-		return -1;
-	}
+	if(m_capturesemaphore.tryAcquire(1,100)==0 )
+	 return -1;
 	m_adquiring=1;
 	fd_set    fds ;
 	struct timeval   tv;
@@ -834,7 +831,7 @@ int v4lcapture::WaitNextFrame(v4l2image **img,int mstimeout)
 	if(iret<=0)
 	{
 		*img=NULL;
-		m_capturesemaphore.unget();
+		m_capturesemaphore.release();
 		return -1;
 	}
 	struct v4l2_buffer tV4L2buf;
@@ -846,7 +843,7 @@ int v4lcapture::WaitNextFrame(v4l2image **img,int mstimeout)
 		string msg="Error dequeue buffer during  capture,  VIDIOC_DQBUF" + m_currdevicepath;
 		printerror(msg);
 		*img=NULL;
-		m_capturesemaphore.unget();
+		m_capturesemaphore.release();
 		m_adquiring=0;
 		return -1;
 	}
@@ -895,11 +892,11 @@ int v4lcapture::WaitNextFrame(v4l2image **img,int mstimeout)
 		string msg="Error queue buffer during  capture,  VIDIOC_QBUF" + m_currdevicepath;
 		printerror(msg);
 		*img=NULL;
-		m_capturesemaphore.unget();
+		m_capturesemaphore.release();
 		m_adquiring=0;
 		return -2;
 	}
-	m_capturesemaphore.unget();
+	m_capturesemaphore.release();
 	m_adquiring=0;
 	return 0;
 }
