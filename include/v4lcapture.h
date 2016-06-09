@@ -24,10 +24,10 @@
 #include <vector>
 #include <inttypes.h>
 #include <sys/types.h>
-#include "globmutex.h"
-#include "globalsemaphore.h"
 #include <linux/videodev2.h>
 #include <time.h>
+#include <QMutex>
+#include <QSemaphore>
 
 #define IS_CONTROL_DISABLED(X) (X==V4L2_CTRL_FLAG_DISABLED || X==V4L2_CTRL_FLAG_INACTIVE||X==V4L2_CTRL_FLAG_READ_ONLY)
 #define NFRAMES_FPS_INTERVAL 5		//!< NUMBER OF FRAMES TO CALCULATE REAL FPS
@@ -296,8 +296,8 @@ private:
 	int m_fid;															//!< Current device fid.
 public:
 	static mapvl4capdevice  m_devicesmap;		//!< Map containing all devices.
-	static globmutex m_devicesmap_mutex;		//!< Mutex for accesing devices map(from all class subinstances).
-	globalsemaphore m_capturesemaphore;			//!< Semaphore for capturing.
+	static QMutex m_devicesmap_mutex;		//!< Mutex for accesing devices map(from all class subinstances).
+	QSemaphore m_capturesemaphore;			//!< Semaphore for capturing.
 	string m_currdevicepath;								//!< Current device path.
 	string m_lasterror;											//!< Last error.
 	mapresolution m_resolutions;						//!< Current device resolutons.

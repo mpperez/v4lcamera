@@ -118,6 +118,11 @@ public:
 		* @param msg New message.
 		*/
 	 void AddMessage(string msg);
+	 /**
+		* @brief Show the aux image viewer
+		* @param visible true for show the viewer.
+		*/
+	 void ShowViewer(bool visible){visible ? m_visor->show(): m_visor->hide();};
 public slots:
 	 /**
 		* @brief One second timmer.
@@ -182,7 +187,7 @@ private:
 	QVector <pair<QString,QSlider*> > m_vectcontrolsliders;						//!< Dinamic sliders vector.
 	QVector <pair<QString,QDoubleSpinBox*> > m_vectcontroldspinbox;		//!< Dinamic spinbox vector.
 	QVector <pair<QString,QCheckBox*> > m_vectcontrolcheckbox;				//!< Dinamic checkbox vector.
-	globmutex m_controlmutex;										//!< Mutex for creating/deleting controls.
+	QMutex m_controlmutex;										//!< Mutex for creating/deleting controls.
 	QSignalMapper *m_sigmappercombos;						//!< Signal mapper for combobox(menu type parameter)
 	QSignalMapper *m_sigmappercchecbx;					//!< Signal mapper for checkbox
 	QSignalMapper *m_sigmappersliders;					//!< Signal mapper for sliders (int type parameter)
