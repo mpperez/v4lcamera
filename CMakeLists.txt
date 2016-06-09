@@ -1,17 +1,20 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.9.1)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
 add_subdirectory (src)
+include_directories (./include/)
+include_directories (./src/)
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/./bin CACHE PATH "Directory for Executables")
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set (LIBRARY_OUTPUT_PATH ${libv4lcamera}/build/lib
-     CACHE PATH "Directory for Libraries")
-set (EXECUTABLE_OUTPUT_PATH ${v4lcamera}/build/bin
-     CACHE PATH "Directory for Executables")
-PROJECT(v4lcamera)
-SET(SRC
-v4lcamera.cpp  v4lcapture.cpp
-)
+#PROJECT(v4lcamera)
 
-SET ( LIBSRC
- v4lcamera.cpp  v4lcapture.cpp
-)
-ADD_EXECUTABLE(v4lcamera ${SRC})
-ADD_LIBRARY ( libv4lcamera SHARED ${LIBSRC})
+SET(SRC ./src/main.cpp)
+
+ADD_EXECUTABLE(qtwebcam ${SRC})
+target_link_libraries(qtwebcam v4lcamera Qt5::Widgets )
+
+

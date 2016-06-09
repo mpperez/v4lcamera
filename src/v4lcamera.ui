@@ -25,8 +25,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>828</width>
-         <height>374</height>
+         <width>826</width>
+         <height>334</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
@@ -159,6 +159,9 @@
           <pointsize>14</pointsize>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Only RGB3 BGR3 and YUYV</string>
+        </property>
         <property name="text">
          <string>Set</string>
         </property>
@@ -189,7 +192,7 @@
      <x>0</x>
      <y>0</y>
      <width>848</width>
-     <height>19</height>
+     <height>36</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuA_zxcfv">

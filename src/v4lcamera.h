@@ -118,6 +118,11 @@ public:
 		* @param msg New message.
 		*/
 	 void AddMessage(string msg);
+	 /**
+		* @brief Show the aux image viewer
+		* @param visible true for show the viewer.
+		*/
+	 void ShowViewer(bool visible){visible ? m_visor->show(): m_visor->hide();};
 public slots:
 	 /**
 		* @brief One second timmer.

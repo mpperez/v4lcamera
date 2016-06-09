@@ -460,7 +460,7 @@ void v4lcamera::on_pushButton_open_device_clicked()
 			UpdateComboStandards();
 			CreateControls();
 			ui->pushButton_open_device->setText("Close");
-			if(!m_islibrary)
+			//if(!m_islibrary)
 				ui->pushButton_start->setEnabled(1);
 			ui->pushButton_set_resolution->setEnabled(1);
 			ui->comboBox_resolution_list->setEnabled(1);
