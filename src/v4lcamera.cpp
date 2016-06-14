@@ -380,6 +380,111 @@ void v4lcamera::UpdateVisivilityControls()
 	}
 
 }
+QVector<QString> v4lcamera::GetBoolParametersName()
+{
+	QVector<QString> current;
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+int v4lcamera::GetBoolParametersName(QString parname,bool *current)
+{
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			*current=iter->second->isChecked();
+			return 0;
+		}
+	}
+	return 1;
+}
+int v4lcamera::SetBoolParametersName(QString parname,bool value)
+{
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setChecked(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+
+QVector<QString> v4lcamera::GetAnalogsParametersName()
+{
+	QVector<QString> current;
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+
+int v4lcamera::GetAnalogParameter(QString parname,float *current,float *minvalue,float *maxvalue)
+{
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			if(current!=NULL)
+				*current=iter->second->value();
+			if(minvalue!=NULL)
+				*minvalue=iter->second->minimum();
+			if(maxvalue!=NULL)
+				*maxvalue=iter->second->maximum();
+			return 0;
+		}
+	}
+	return -1;
+}
+
+int v4lcamera::SetAnalogParameter(QString parname,float value)
+{
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setValue(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+QVector<QString> v4lcamera::GetSelectableParametersName()
+{
+	QVector<QString> current;
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+
+int v4lcamera::GetSelectableParameter(QString parname,int *current)
+{
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			if(current!=NULL)
+				*current=iter->second->currentIndex();
+			return 0;
+		}
+	}
+	return -1;
+}
+
+int v4lcamera::SetSelectableParameter(QString parname,int value)
+{
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setCurrentIndex(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+
 void v4lcamera::UpdateImage(v4l2image *img)
 {
 //m_visor->setWindowTitle(QString::number(m_realfps,'f',1)+"Hz");

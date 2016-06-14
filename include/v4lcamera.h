@@ -76,6 +76,66 @@ public:
 	 */
 	void UpdateVisivilityControls();
 	/**
+	 * @brief Return a vector with the name of the bool type parameters
+	 * @return Qstring vector with parameters.
+	 */
+	QVector<QString> GetBoolParametersName();
+	/**
+	 * @brief Get the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param current Value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int GetBoolParametersName(QString parname, bool *current);
+	/**
+	 * @brief Set the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param value Param value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int SetBoolParametersName(QString parname,bool value);
+	/**
+	 * @brief Return a vector with the name of the analog type parameters
+	 * @return Qstring vector with parameters.
+	 */
+	QVector<QString> GetAnalogsParametersName();
+	/**
+	 * @brief Get the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param current Value.
+	 * @param minvalue Minimum value.
+	 * @param maxvalue Maximum value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int GetAnalogParameter(QString parname,float *current,float *minvalue,float *maxvalue);
+	/**
+	 * @brief Set the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param value Param value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int SetAnalogParameter(QString parname,float value);
+	/**
+	 * @brief Return a vector with the name of the selectable type parameters
+	 * @return Qstring vector with parameters.
+	 */
+	QVector<QString> GetSelectableParametersName();
+	/**
+	 * @brief Get the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param current Value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int GetSelectableParameter(QString parname, int *current);
+	/**
+	 * @brief Set the current value of the parameter by name.
+	 * @param parname Parameter name.
+	 * @param value Param value.
+	 * @return 0 if ok -1 if param not found.
+	 */
+	int SetSelectableParameter(QString parname,int value);
+private:
+	/**
 	 * @brief Add new type menu control to the dialog.
 	 * @param name Name of the control.same as driver nameof the control.
 	 * @param val Control structure.
