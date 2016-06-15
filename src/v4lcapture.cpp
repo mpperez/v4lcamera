@@ -118,7 +118,10 @@ int v4lcapture::UpdateDevicesMap()
 		string devname=v4ldev.v4l2_name.data();//device name for map identifier
 		v4ldev.v4l2_name="/dev/";
 		v4ldev.v4l2_name+=dir_entry->d_name;//v4l name for map property
-		printf("Found video input:%s in %s, driver:%s\n",devname.data(),v4ldev.v4l2_name.data(),v4ldev.driver_version.data());
+		itermapvl4capdevice it=m_devicesmap.find((char*)devname.data());
+		if(it!=m_devicesmap.end())
+			devname+="_1";
+		printf("Found video input:\"%s\" in %s, driver:%s\n",devname.data(),v4ldev.v4l2_name.data(),v4ldev.driver_version.data());
 		m_devicesmap.insert(pairvl4capdevice(devname.data(),v4ldev));
 	}
 	m_devicesmap_mutex.unlock();
