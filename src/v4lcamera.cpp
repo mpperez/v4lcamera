@@ -34,25 +34,26 @@ v4lcamera::v4lcamera(QWidget *parent,bool workaslibrary/*=1*/) :
 	m_ncams++;
 	ui->setupUi(this);
 	UpdateComboDevices();
-	UpdateDevicesMap();
+	//UpdateDevicesMap();
 	this->setVisible(1);
 	m_sigmappercombos=NULL;
 	m_sigmappercchecbx=NULL;
 	m_sigmappersliders=NULL;
 	m_sigmappersspinbox=NULL;
-	m_visor=new QWidget(NULL);
-	m_visor->resize(480,320);
-	m_layoutvisor=new QGridLayout(m_visor);
-	m_layoutvisor->setMargin(0);
-	m_framevisor.setScaledContents(1);
-	m_layoutvisor->addWidget(&m_framevisor,0,0);
 	if(!m_islibrary)
+	{
+		m_visor=new QWidget(NULL);
+		m_visor->resize(480,320);
+		m_layoutvisor=new QGridLayout(m_visor);
+		m_layoutvisor->setMargin(0);
+		m_framevisor.setScaledContents(1);
+		m_layoutvisor->addWidget(&m_framevisor,0,0);
 		m_visor->show();
-	connect(&m_timer1s, SIGNAL(timeout()), this, SLOT(OnTimer1s()));
-	if(!m_islibrary)
 		connect(this, SIGNAL(SGNewImage(v4l2image *)), this, SLOT(OnNewImage(v4l2image *)),Qt::QueuedConnection);
-	m_timer1s.start(1000);
-	on_pushButton_open_device_clicked();
+		connect(&m_timer1s, SIGNAL(timeout()), this, SLOT(OnTimer1s()));
+		m_timer1s.start(1000);
+	}
+//	on_pushButton_open_device_clicked();
 }
 v4lcamera::~v4lcamera()
 {
@@ -380,111 +381,9 @@ void v4lcamera::UpdateVisivilityControls()
 	}
 
 }
-QVector<QString> v4lcamera::GetBoolParametersName()
-{
-	QVector<QString> current;
-	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
-		current.append(iter->first);
-	return current;
-}
-int v4lcamera::GetBoolParametersName(QString parname,bool *current)
-{
-	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			*current=iter->second->isChecked();
-			return 0;
-		}
-	}
-	return 1;
-}
-int v4lcamera::SetBoolParametersName(QString parname,bool value)
-{
-	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			iter->second->setChecked(value);
-			return 0;
-		}
-	}
-	return -1;
-}
-
-QVector<QString> v4lcamera::GetAnalogsParametersName()
-{
-	QVector<QString> current;
-	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
-		current.append(iter->first);
-	return current;
-}
-
-int v4lcamera::GetAnalogParameter(QString parname,float *current,float *minvalue,float *maxvalue)
-{
-	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			if(current!=NULL)
-				*current=iter->second->value();
-			if(minvalue!=NULL)
-				*minvalue=iter->second->minimum();
-			if(maxvalue!=NULL)
-				*maxvalue=iter->second->maximum();
-			return 0;
-		}
-	}
-	return -1;
-}
-
-int v4lcamera::SetAnalogParameter(QString parname,float value)
-{
-	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			iter->second->setValue(value);
-			return 0;
-		}
-	}
-	return -1;
-}
-QVector<QString> v4lcamera::GetSelectableParametersName()
-{
-	QVector<QString> current;
-	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
-		current.append(iter->first);
-	return current;
-}
-
-int v4lcamera::GetSelectableParameter(QString parname,int *current)
-{
-	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			if(current!=NULL)
-				*current=iter->second->currentIndex();
-			return 0;
-		}
-	}
-	return -1;
-}
-
-int v4lcamera::SetSelectableParameter(QString parname,int value)
-{
-	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
-	{
-		if(iter->first==parname)
-		{
-			iter->second->setCurrentIndex(value);
-			return 0;
-		}
-	}
-	return -1;
-}
-
+//
+//working as application
+//
 void v4lcamera::UpdateImage(v4l2image *img)
 {
 //m_visor->setWindowTitle(QString::number(m_realfps,'f',1)+"Hz");
@@ -547,20 +446,26 @@ void v4lcamera::AddMessage(string msg)
 {
 	ui->statusbar->showMessage(QString::fromStdString(msg));
 }
-///TIMERS
-///
-void v4lcamera::OnTimer1s()
+//
+//working as library(external control)
+//
+QVector<QString> v4lcamera::GetDeviceList()
 {
-		m_visor->setWindowTitle(QString::number(m_realfps,'f',1)+"Hz");
+	QVector<QString> current;
+	for(int r=0;r<ui->comboBox_device_list->count();r++)
+		current.append(ui->comboBox_device_list->itemText(r));
+	return current;
 }
-///DIALOG
-///
-void v4lcamera::on_pushButton_open_device_clicked()
+int v4lcamera::OpenDevice(QString devicename)
 {
-	QString tx=ui->comboBox_device_list->currentText();
+	int index = ui->comboBox_device_list->findText(devicename);
+	if(index!=-1)
+		ui->comboBox_device_list->setCurrentIndex(index);
+	else
+		return -1;
 	if(m_status==V4LCAP_CLOSED)
 	{
-		if(!OpenDeviceName(tx.toLatin1().data()))
+		if(!OpenDeviceName(devicename.toLatin1().data()))
 		{
 			UpdateComboStandards();
 			CreateControls();
@@ -585,6 +490,212 @@ void v4lcamera::on_pushButton_open_device_clicked()
 		UpdateComboStandards();
 		ui->pushButton_start->setText("Start");
 	}
+	return 0;
+}
+QVector<QString> v4lcamera::GetStandardsList()
+{
+	QVector<QString> current;
+	for(int r=0;r<ui->comboBox_standaard_list->count();r++)
+		current.append(ui->comboBox_standaard_list->itemText(r));
+	return current;
+}
+int v4lcamera::SetStandard(QString standardname)
+{
+	int index = ui->comboBox_standaard_list->findText(standardname);
+	if(index!=-1)
+		ui->comboBox_standaard_list->setCurrentIndex(index);
+	else
+		return -1;
+	int width,height;
+	QString resolutionname=ui->comboBox_resolution_list->currentText();
+	QStringList list = resolutionname.split("x",QString::SkipEmptyParts);
+	if(list.size()==2)
+	{
+		width=list.at(0).toInt();
+		QStringList list1 = list.at(1).split(" ");
+		if(list1.size()>=2)
+			height=list1.at(0).toInt();
+		if(0==v4lcapture::SetResolution(standardname.toStdString(),width,height))
+			AddMessage("Resolution changed");
+		if(0!=InitCaptureBuffers(4))
+			AddMessage(GetLastErrorstr());
+	}
+	else
+		AddMessage(GetLastErrorstr());
+	return 0;
+	return 0;
+}
+QVector<QString> v4lcamera::GetResolutionsList()
+{
+	QVector<QString> current;
+	for(int r=0;r<ui->comboBox_resolution_list->count();r++)
+		current.append(ui->comboBox_resolution_list->itemText(r));
+	return current;
+}
+int v4lcamera::SetResolution(QString resolutionname)
+{
+	int index = ui->comboBox_resolution_list->findText(resolutionname);
+	if(index!=-1)
+		ui->comboBox_resolution_list->setCurrentIndex(index);
+	else
+		return -1;
+	int width,height;
+	QStringList list = resolutionname.split("x",QString::SkipEmptyParts);
+	if(list.size()==2)
+	{
+		width=list.at(0).toInt();
+		QStringList list1 = list.at(1).split(" ");
+		if(list1.size()>=2)
+			height=list1.at(0).toInt();
+		if(0==v4lcapture::SetResolution(ui->comboBox_standaard_list->currentText().toStdString(),width,height))
+			AddMessage("Resolution changed");
+		if(0!=InitCaptureBuffers(4))
+			AddMessage(GetLastErrorstr());
+	}
+	else
+		AddMessage(GetLastErrorstr());
+	return 0;
+}
+QVector<QString> v4lcamera::GetBoolParametersName()
+{
+	QVector<QString> current;
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+int v4lcamera::GetBoolParametersName(QString parname,bool *current)
+{
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			*current=iter->second->isChecked();
+			return 0;
+		}
+	}
+	return 1;
+}
+int v4lcamera::SetBoolParametersName(QString parname,bool value)
+{
+	for(QVector < pair<QString,QCheckBox*> >::iterator iter=m_vectcontrolcheckbox.begin();iter!=m_vectcontrolcheckbox.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setChecked(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+QVector<QString> v4lcamera::GetAnalogsParametersName()
+{
+	QVector<QString> current;
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+int v4lcamera::GetAnalogParameter(QString parname,float *current,float *minvalue,float *maxvalue)
+{
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			if(current!=NULL)
+				*current=iter->second->value();
+			if(minvalue!=NULL)
+				*minvalue=iter->second->minimum();
+			if(maxvalue!=NULL)
+				*maxvalue=iter->second->maximum();
+			return 0;
+		}
+	}
+	return -1;
+}
+int v4lcamera::SetAnalogParameter(QString parname,float value)
+{
+	for(QVector <pair<QString,QSlider*> >::iterator iter=m_vectcontrolsliders.begin();iter!=m_vectcontrolsliders.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setValue(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+QVector<QString> v4lcamera::GetSelectableParametersName()
+{
+	QVector<QString> current;
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+		current.append(iter->first);
+	return current;
+}
+int v4lcamera::GetSelectableParameter(QString parname,int *current)
+{
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			if(current!=NULL)
+				*current=iter->second->currentIndex();
+			return 0;
+		}
+	}
+	return -1;
+}
+int v4lcamera::SetSelectableParameter(QString parname,int value)
+{
+	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
+	{
+		if(iter->first==parname)
+		{
+			iter->second->setCurrentIndex(value);
+			return 0;
+		}
+	}
+	return -1;
+}
+int v4lcamera::Start()
+{
+	if(0==StartAdquisition())
+	{
+		ui->pushButton_start->setText("Stop");
+		ui->pushButton_set_resolution->setEnabled(0);
+		ui->comboBox_resolution_list->setEnabled(0);
+		ui->comboBox_standaard_list->setEnabled(0);
+		return 0;
+	}
+	else
+		AddMessage(GetLastErrorstr());
+	return -1;
+}
+int v4lcamera::Stop()
+{
+	if(0==StopAdquisition())
+	{
+		ui->pushButton_start->setText("Start");
+		ui->pushButton_set_resolution->setEnabled(1);
+		ui->comboBox_resolution_list->setEnabled(1);
+		ui->comboBox_standaard_list->setEnabled(1);
+		return 0;
+	}
+	else
+		AddMessage(GetLastErrorstr());
+	return -1;
+}
+//
+//TIMERS
+//
+void v4lcamera::OnTimer1s()
+{
+		m_visor->setWindowTitle(QString::number(m_realfps,'f',1)+"Hz");
+}
+//
+//DIALOG
+//
+void v4lcamera::on_pushButton_open_device_clicked()
+{
+	OpenDevice(ui->comboBox_device_list->currentText());
 }
 void v4lcamera::on_pushButton_update_devicelist_clicked()
 {
@@ -597,53 +708,18 @@ void v4lcamera::on_comboBox_device_list_currentIndexChanged(int )
 }
 void v4lcamera::on_pushButton_set_resolution_clicked()
 {
-	ui->comboBox_standaard_list->currentText();
-	QString res=ui->comboBox_resolution_list->currentText();
-	int width,height;
-	QStringList list = res.split("x",QString::SkipEmptyParts);
-	if(list.size()==2)
-	{
-		width=list.at(0).toInt();
-		QStringList list1 = list.at(1).split(" ");
-		if(list1.size()>=2)
-			height=list1.at(0).toInt();
-		if(0==SetResolution(ui->comboBox_standaard_list->currentText().toStdString(),width,height))
-			AddMessage("Resolution changed");
-		if(0!=InitCaptureBuffers(4))
-			AddMessage(GetLastErrorstr());
-	}
-	else
-		AddMessage(GetLastErrorstr());
+	SetResolution(ui->comboBox_resolution_list->currentText());//change resolution and standard
 }
 void v4lcamera::on_pushButton_start_clicked()
 {
 	if(ui->pushButton_start->text()=="Start")
-	{
-		if(0==StartAdquisition())
-		{
-			ui->pushButton_start->setText("Stop");
-			ui->pushButton_set_resolution->setEnabled(0);
-			ui->comboBox_resolution_list->setEnabled(0);
-			ui->comboBox_standaard_list->setEnabled(0);
-		}
-		else
-			AddMessage(GetLastErrorstr());
-	}
+		Start();
 	else
-	{
-		if(0==StopAdquisition())
-		{
-			ui->pushButton_start->setText("Start");
-			ui->pushButton_set_resolution->setEnabled(1);
-			ui->comboBox_resolution_list->setEnabled(1);
-			ui->comboBox_standaard_list->setEnabled(1);
-		}
-		else
-			AddMessage(GetLastErrorstr());
-	}
+		Stop();
 }
-///FROM DYNAMIC CONROLS
-///
+//
+//FROM DYNAMIC CONROLS
+//
 int v4lcamera::AplyConfigCombo(QString controlname)
 {
 	for(QVector < pair<QString,QComboBox*> >::iterator iter=m_vectcontrolcombos.begin();iter!=m_vectcontrolcombos.end();iter++)
@@ -716,16 +792,18 @@ int v4lcamera::AplyConfigCheckbox(QString controlname)
 	UpdateVisivilityControls();
 	return 0;
 }
-///FROM ADQUISITION THREAD
-///
+//
+//FROM ADQUISITION THREAD
+//
 int v4lcamera::OnNewImage(v4l2image *img)
 {
 	UpdateImage(img);
 	delete img;
 	return 0;
 }
-///ADQUISITION THTREAD
-///
+//
+//ADQUISITION THTREAD
+//
 void* v4lcamera::ThreadAdq(void* param)
 {
 	v4lcamera* pthis=(v4lcamera*)param;

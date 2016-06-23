@@ -47,34 +47,38 @@ public:
 	explicit v4lcamera(QWidget *parent = 0,bool workaslibrary=1);
 	~v4lcamera();
 	/**
-	 *  Updates Combobox with available devices.
+	 * @brief Return the device list names to select.
+	 * @return QString vector filled with names.
 	 */
-	void UpdateComboDevices();
+	QVector<QString> GetDeviceList();
 	/**
-	 *  Updates combobox with available standards.
+	 * @brief Open device by name
+	 * @param devicename
+	 * @return
 	 */
-	void UpdateComboStandards();
+	int OpenDevice(QString devicename);
 	/**
-	 *  Updates combobox with available resolutions.
+	 * @brief Get a list with standards
+	 * @return Qstring vector list.
 	 */
-	void UpdateComboResolutions();
+	QVector<QString> GetStandardsList();
 	/**
-	 * Creates camera available controls.
+	 * @brief Sets the standard video.
+	 * @param devicename name of the standard(from GetStandardsList())
+	 * @return -1 for error 0 noerror.
 	 */
-	void CreateControls();
+	int SetStandard(QString standardname);
 	/**
-	 * @brief Resend new image from adquisition thread when working as capture program.
-	 * @param img new image.
+	 * @brief Get a list with resolutions.
+	 * @return Qstring vector list.
 	 */
-	void EmitNewImage(v4l2image *img){emit SGNewImage(img);};
+	QVector<QString> GetResolutionsList();
 	/**
-	 * @brief Update the control values and visibility into the dialog.
+	 * @brief Set the resolution
+	 * @param resolutionname name of the resolution(from GetResolutionsList())
+	 * @return -1 for error 0 noerror.
 	 */
-	void UpdateDialogValues();
-	/**
-	 * Updates the controsl with current visibility configuration.
-	 */
-	void UpdateVisivilityControls();
+	int SetResolution(QString resolutionname);
 	/**
 	 * @brief Return a vector with the name of the bool type parameters
 	 * @return Qstring vector with parameters.
@@ -134,7 +138,54 @@ public:
 	 * @return 0 if ok -1 if param not found.
 	 */
 	int SetSelectableParameter(QString parname,int value);
+	/**
+	 * @brief Stop adquisition
+	 * @return
+	 */
+	int Stop();
+	/**
+	 * @brief Start adquisition
+	 * @return
+	 */
+	int Start();
+	/**
+	 * @brief Resend new image from adquisition thread when working as capture program.
+	 * @param img new image.
+	 */
+	void EmitNewImage(v4l2image *img){emit SGNewImage(img);};
+	/**
+	 * @brief YUV422toRGB888 YUV422 to  RGB888 converter.
+	 * @param width Image width.
+	 * @param height Image height.
+	 * @param src	Source raw buffer.
+	 * @param dst Dest raw buffer.
+	 */
+	static void YUV422toRGB888(int width, int height, unsigned char *src, unsigned char *dst);
 private:
+	/**
+	 * @brief Update the control values and visibility into the dialog.
+	 */
+	void UpdateDialogValues();
+	/**
+	 * Updates the controsl with current visibility configuration.
+	 */
+	void UpdateVisivilityControls();
+	/**
+	 *  Updates Combobox with available devices.
+	 */
+	void UpdateComboDevices();
+	/**
+	 *  Updates combobox with available standards.
+	 */
+	void UpdateComboStandards();
+	/**
+	 *  Updates combobox with available resolutions.
+	 */
+	void UpdateComboResolutions();
+	/**
+	 * Creates camera available controls.
+	 */
+	void CreateControls();
 	/**
 	 * @brief Add new type menu control to the dialog.
 	 * @param name Name of the control.same as driver nameof the control.
@@ -166,18 +217,10 @@ private:
 	 */
 	void UpdateImage(v4l2image *img);
 	/**
-	 * @brief YUV422toRGB888 YUV422 to  RGB888 converter.
-	 * @param width Image width.
-	 * @param height Image height.
-	 * @param src	Source raw buffer.
-	 * @param dst Dest raw buffer.
-	 */
- void YUV422toRGB888(int width, int height, unsigned char *src, unsigned char *dst);
-	 /**
 		* @brief Add new message to status bar.
 		* @param msg New message.
 		*/
-	 void AddMessage(string msg);
+	void AddMessage(string msg);
 	 /**
 		* @brief Show the aux image viewer
 		* @param visible true for show the viewer.

@@ -105,6 +105,7 @@ int v4lcapture::UpdateDevicesMap()
 		m_devicesmap_mutex.unlock();
 		return -1;
 	}
+	m_devicesmap.clear();
 	struct dirent *dir_entry;
 	while((dir_entry = readdir(v4l_dir)))
 	{

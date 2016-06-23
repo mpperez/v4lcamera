@@ -137,6 +137,7 @@ class v4lcapture
 public:
 	v4lcapture();
 	~v4lcapture();
+protected:
 	/**
 	 * @brief OpenDevice
 	 * @param path Complete path.
@@ -263,13 +264,6 @@ public:
 	 */
 	int StopAdquisition();
 	/**
-	 * @brief Wait until next frame
-	 * @param img Image to fill.
-	 * @param mstimeout Timeout
-	 * @return
-	 */
-	int WaitNextFrame(v4l2image **img,int mstimeout);
-	/**
 	 * @brief Change resolution.
 	 * @param val
 	 * @param width
@@ -277,6 +271,20 @@ public:
 	 * @return
 	 */
 	int SetResolution(string standard, int width, int height);
+
+public:
+	/**
+	 * @brief Wait until next frame
+	 * @param img Image to fill.
+	 * @param mstimeout Timeout
+	 * @return
+	 */
+	int WaitNextFrame(v4l2image **img,int mstimeout);
+private:
+	/**
+	 * @brief Calculate real FPS every NFRAMES_FPS_INTERVAL frames.
+	 */
+	void CalculateFPS();
 	/**
 	 * @brief V4l internal ioctl.
 	 * @param fh
@@ -285,11 +293,6 @@ public:
 	 * @return
 	 */
 	static	int xioctl(int fh, int request, void *arg);
-private:
-	/**
-	 * @brief Calculate real FPS every NFRAMES_FPS_INTERVAL frames.
-	 */
-	void CalculateFPS();
 ///****************************************** VARIABLES **************************************
 ///*******************************************************************************************
 private:
