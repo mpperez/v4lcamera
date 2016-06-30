@@ -58,6 +58,11 @@ public:
 	 */
 	int OpenDevice(QString devicename);
 	/**
+	 * @brief Closes current open device
+	 * @return
+	 */
+	int CloseCurrentDevice( );
+	/**
 	 * @brief Get a list with standards
 	 * @return Qstring vector list.
 	 */

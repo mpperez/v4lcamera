@@ -459,39 +459,41 @@ QVector<QString> v4lcamera::GetDeviceList()
 int v4lcamera::OpenDevice(QString devicename)
 {
 	int index = ui->comboBox_device_list->findText(devicename);
-	if(index!=-1)
+	if(index!=-1 || m_status!=V4LCAP_CLOSED)
 		ui->comboBox_device_list->setCurrentIndex(index);
 	else
 		return -1;
-	if(m_status==V4LCAP_CLOSED)
+	if(!OpenDeviceName(devicename.toLatin1().data()))
 	{
-		if(!OpenDeviceName(devicename.toLatin1().data()))
-		{
-			UpdateComboStandards();
-			CreateControls();
-			ui->pushButton_open_device->setText("Close");
-			//if(!m_islibrary)
-				ui->pushButton_start->setEnabled(1);
-			ui->pushButton_set_resolution->setEnabled(1);
-			ui->comboBox_resolution_list->setEnabled(1);
-			ui->comboBox_standaard_list->setEnabled(1);
-		}
-		else
-			AddMessage(GetLastErrorstr());
+		UpdateComboStandards();
+		CreateControls();
+		ui->pushButton_open_device->setText("Close");
+		//if(!m_islibrary)
+			ui->pushButton_start->setEnabled(1);
+		ui->pushButton_set_resolution->setEnabled(1);
+		ui->comboBox_resolution_list->setEnabled(1);
+		ui->comboBox_standaard_list->setEnabled(1);
 	}
 	else
-	{
-		if(0!=CloseDevice())
-			AddMessage(GetLastErrorstr());
-		ClearControls();
-		ui->pushButton_start->setEnabled(0);
-		ui->pushButton_open_device->setText("Open");
-		ui->pushButton_set_resolution->setEnabled(0);
-		UpdateComboStandards();
-		ui->pushButton_start->setText("Start");
-	}
+		AddMessage(GetLastErrorstr());
 	return 0;
 }
+int v4lcamera::CloseCurrentDevice( )
+{
+	if(0!=CloseDevice())
+	{
+		AddMessage(GetLastErrorstr());
+		return -1;
+	}
+	ClearControls();
+	ui->pushButton_start->setEnabled(0);
+	ui->pushButton_open_device->setText("Open");
+	ui->pushButton_set_resolution->setEnabled(0);
+	UpdateComboStandards();
+	ui->pushButton_start->setText("Start");
+	return 0;
+}
+
 QVector<QString> v4lcamera::GetStandardsList()
 {
 	QVector<QString> current;
@@ -695,7 +697,10 @@ void v4lcamera::OnTimer1s()
 //
 void v4lcamera::on_pushButton_open_device_clicked()
 {
-	OpenDevice(ui->comboBox_device_list->currentText());
+	if(m_status==V4LCAP_CLOSED)
+		OpenDevice(ui->comboBox_device_list->currentText());
+	else
+		this->CloseCurrentDevice();
 }
 void v4lcamera::on_pushButton_update_devicelist_clicked()
 {
