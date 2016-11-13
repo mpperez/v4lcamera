@@ -272,6 +272,8 @@ private slots:
 	void on_comboBox_device_list_currentIndexChanged(int);
 	void on_pushButton_set_resolution_clicked();
 	void on_pushButton_start_clicked();
+	void on_comboBox_standaard_list_currentIndexChanged(int index);
+
 signals:
 	void SGNewImage(v4l2image *img);
 private:

@@ -95,18 +95,24 @@ void v4lcamera::UpdateComboStandards()
 	if(0!=GetCurrentResolution(&tx,&width,&height,&fps))
 		AddMessage(GetLastErrorstr());
 	int current=-1;
-	for(itermapresolution iter=m_resolutions.begin();iter!=m_resolutions.end();iter++,count++)
+	for(itermapresolution iter=m_resolutions.begin();iter!=m_resolutions.end();iter++)
 	{
-		ui->comboBox_standaard_list->insertItem(count,iter->first.data());
-		if(tx==iter->first)
-			current=count;
+		QByteArray str=iter->first.data();
+		str=str.toLower();
+		if( str== "rgb3" ||str == "yuyv" )
+		{
+			ui->comboBox_standaard_list->insertItem(count,iter->first.data());
+			count++;
+		}
+		if(str=="rgb3")
+			current=count-1;
 	}
 	ui->comboBox_standaard_list->setCurrentIndex(current);
 	UpdateComboResolutions();
 }
 void v4lcamera::UpdateComboResolutions()
 {
-	if(m_status==V4LCAP_CLOSED)
+	//if(m_status==V4LCAP_CLOSED)
 		ui->comboBox_resolution_list->clear();
 	if(m_resolutions.size()==0)
 		return;
@@ -711,6 +717,10 @@ void v4lcamera::on_comboBox_device_list_currentIndexChanged(int )
 {
 
 }
+void v4lcamera::on_comboBox_standaard_list_currentIndexChanged(int index)
+{
+		UpdateComboResolutions();
+}
 void v4lcamera::on_pushButton_set_resolution_clicked()
 {
 	SetResolution(ui->comboBox_resolution_list->currentText());//change resolution and standard
@@ -830,3 +840,5 @@ void* v4lcamera::ThreadAdq(void* param)
 	pthis->m_stop=-1;
 	return NULL;
 }
+
+
