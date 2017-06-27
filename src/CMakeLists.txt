@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.9.1)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+
 include_directories (../include/)
 set(CMAKE_AUTOUIC ON)
 #set(CMAKE_AUTOMOC ON)
