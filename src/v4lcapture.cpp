@@ -374,8 +374,12 @@ int v4lcapture::GetCurrentControls()
 				m_controls.insert(paircontrolstr(ctrname,strc));
 		}
 		else
-			if (errno == EINVAL)
+    {
+      if (errno /*== EINVAL*/)
+      {
 				break;
+      }
+    }
 	}
 	queryctrl.id = V4L2_CTRL_FLAG_NEXT_CTRL;
 	while (0 == xioctl (m_fid, VIDIOC_QUERYCTRL, &queryctrl))
