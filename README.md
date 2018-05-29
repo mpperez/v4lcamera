@@ -4,7 +4,9 @@
  camera controls.Can be used as a player(RGB3 YUYV) or as image adquisition library.
 
 **whats this**  webcam library and a webcam application.
+
 **contains**  C++ Interface class to v4l and gui using Qt5.
+
 **dependencies**  Qt5 v4l.
 
 <img src="doc/readme/controlwindow.png">
